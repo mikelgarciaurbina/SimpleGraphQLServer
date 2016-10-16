@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <form action="/graphql" method="post" id="form">
+      <input type="submit" value="Submit">
+    </form>
+    <script type="text/javascript">
+      var form = document.getElementById("form");
+      form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        const params = { query : `{
+          users {
+            id
+            name
+            email
+            articles {
+              id
+              title
+              description
+              user {
+                id
+                name
+              }
+            }
+          }
+        }`};
+        loadDoc(params);
+      });
+
+      function loadDoc(params) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            console.log(xhttp.responseText);
+          }
+        };
+        xhttp.open("POST", "http://localhost:5000/graphql", true);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.send(JSON.stringify(params));
+      }
+    </script>
+  </body>
+</html>
