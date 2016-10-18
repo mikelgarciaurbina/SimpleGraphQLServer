@@ -50,30 +50,6 @@ Conn.sync({force: true}).then(function () {
   });
 });
 
-const ArticleType = new GraphQLObjectType({
-  name: 'Article',
-  description: 'This represents a Article',
-  fields: () => {
-    return {
-      id: {
-        type: GraphQLInt
-      },
-      title: {
-        type: GraphQLString
-      },
-      description: {
-        type: GraphQLString
-      },
-      user: {
-        type: UserType,
-        resolve: (parent, args, ast) => {
-          return parent.getUser();
-        }
-      }
-    }
-  }
-})
-
 const UserType = new GraphQLObjectType({
   name: 'User',
   description: 'This represents a User',
@@ -101,17 +77,29 @@ const UserType = new GraphQLObjectType({
   }
 });
 
-const ArticleQuery = {
-  type: new GraphQLList(ArticleType),
-  args: {
-    id: {
-      type: GraphQLString
+const ArticleType = new GraphQLObjectType({
+  name: 'Article',
+  description: 'This represents a Article',
+  fields: () => {
+    return {
+      id: {
+        type: GraphQLInt
+      },
+      title: {
+        type: GraphQLString
+      },
+      description: {
+        type: GraphQLString
+      },
+      user: {
+        type: UserType,
+        resolve: (parent, args, ast) => {
+          return parent.getUser();
+        }
+      }
     }
-  },
-  resolve: (parent, args, ast) => {
-    return ArticleModel.findAll({where: args});
   }
-};
+});
 
 const UserQuery = {
   type: new GraphQLList(UserType),
@@ -122,6 +110,18 @@ const UserQuery = {
   },
   resolve: (parent, args, ast) => {
     return UserModel.findAll({where: args});
+  }
+};
+
+const ArticleQuery = {
+  type: new GraphQLList(ArticleType),
+  args: {
+    id: {
+      type: GraphQLString
+    }
+  },
+  resolve: (parent, args, ast) => {
+    return ArticleModel.findAll({where: args});
   }
 };
 
