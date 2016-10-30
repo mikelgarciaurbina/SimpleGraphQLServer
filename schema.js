@@ -3,7 +3,8 @@ import {
   GraphQLInt,
   GraphQLString,
   GraphQLSchema,
-  GraphQLList
+  GraphQLList,
+  GraphQLNonNull
 } from 'graphql';
 import Sequelize from 'sequelize';
 
@@ -125,6 +126,32 @@ const ArticleQuery = {
   }
 };
 
+const addArticleQuery = {
+  type: ArticleType,
+  args: {
+    title: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    description: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    user_id: {
+      type: new GraphQLNonNull(GraphQLInt)
+    }
+  },
+  resolve: (parent, args, ast) => {
+    return new Promise((resolve) => {
+      UserModel.findOne({where: {id: args.user_id}}).then((user) => {
+        const article = user.createArticle({
+          title: args.title,
+          description: args.description
+        });
+        resolve(article);
+      });
+    });
+  }
+};
+
 const Schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
@@ -132,6 +159,14 @@ const Schema = new GraphQLSchema({
       return {
         users: UserQuery,
         articles: ArticleQuery
+      }
+    }
+  }),
+  mutation: new GraphQLObjectType({
+    name: 'Mutations',
+    fields: () => {
+      return {
+        addArticle: addArticleQuery
       }
     }
   })
