@@ -40,7 +40,7 @@ ArticleModel.belongsTo(UserModel);
 
 Conn.sync({force: true}).then(function () {
   return UserModel.create({
-    email: 'mikel@prueba.com',
+    email: 'mikel_6@hotmail.com',
     name: 'Mikel',
     password: 'prueba'
   }).then((createdUser) => {
